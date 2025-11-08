@@ -1,0 +1,22 @@
+{
+  "name": "costela-do-titi",
+  "version": "1.0.0",
+  "description": "Site de pedidos online para a Costela do Titi",
+  "main": "index.html",
+  "scripts": {
+    "start": "live-server --port=3000",
+    "dev": "live-server --port=3000 --watch=css,js",
+    "build": "echo 'Build complete'"
+  },
+  "keywords": [
+    "restaurant",
+    "delivery",
+    "food",
+    "pedidos"
+  ],
+  "author": "Costela do Titi",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.0"
+  }
+}

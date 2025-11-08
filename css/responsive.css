@@ -1,0 +1,158 @@
+/* Melhorias para Mobile */
+@media (max-width: 768px) {
+    .container {
+        width: 92%;
+    }
+    
+    .hero {
+        height: 160px;
+    }
+    
+    .hero-content h1 {
+        font-size: 24px;
+    }
+    
+    .hero-content p {
+        font-size: 14px;
+    }
+    
+    .section-title {
+        font-size: 22px;
+    }
+    
+    .menu-item {
+        margin-bottom: 12px;
+    }
+    
+    .item-actions {
+        flex-direction: column;
+    }
+    
+    .simple-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .simple-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .cart-container {
+        padding: 15px;
+    }
+    
+    .modal-content {
+        padding: 20px;
+        margin: 10px;
+    }
+    
+    .form-buttons {
+        flex-direction: column;
+    }
+    
+    .floating-cart {
+        bottom: 15px;
+        left: 15px;
+    }
+    
+    .scroll-top {
+        bottom: 15px;
+        right: 15px;
+    }
+    
+    .cart-icon-btn {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-content {
+        gap: 8px;
+    }
+    
+    .logo-text {
+        font-size: 18px;
+    }
+    
+    .delivery-btn {
+        font-size: 13px;
+        padding: 10px 8px;
+    }
+    
+    .item-title {
+        font-size: 16px;
+    }
+    
+    .item-price {
+        font-size: 18px;
+    }
+    
+    .simple-item-info h4 {
+        font-size: 15px;
+    }
+    
+    .quantity {
+        gap: 6px;
+    }
+    
+    .qty-btn {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .additional-item {
+        padding: 10px;
+    }
+}
+
+/* Melhorias de acessibilidade para touch */
+@media (hover: none) and (pointer: coarse) {
+    .delivery-btn:hover,
+    .qty-btn:hover,
+    .add-to-cart:hover,
+    .customize-btn:hover,
+    .add-to-cart-direct:hover,
+    .checkout-btn:hover,
+    .cancel-btn:hover,
+    .confirm-btn:hover,
+    .cart-icon-btn:hover {
+        transform: none;
+    }
+    
+    .delivery-btn:active,
+    .qty-btn:active,
+    .add-to-cart:active,
+    .customize-btn:active,
+    .add-to-cart-direct:active,
+    .checkout-btn:active,
+    .cancel-btn:active,
+    .confirm-btn:active,
+    .cart-icon-btn:active {
+        transform: scale(0.95);
+    }
+}
+
+/* Suporte para dispositivos com notch */
+@supports(padding: max(0px)) {
+    .container {
+        padding-left: max(15px, env(safe-area-inset-left));
+        padding-right: max(15px, env(safe-area-inset-right));
+    }
+    
+    body {
+        padding-bottom: max(20px, env(safe-area-inset-bottom));
+    }
+    
+    .floating-cart {
+        bottom: max(20px, env(safe-area-inset-bottom));
+        left: max(20px, env(safe-area-inset-left));
+    }
+    
+    .scroll-top {
+        bottom: max(20px, env(safe-area-inset-bottom));
+        right: max(20px, env(safe-area-inset-right));
+    }
+}
