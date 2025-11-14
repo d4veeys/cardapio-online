@@ -1,8 +1,39 @@
-function scrollToCart() {
-    const cartSection = document.querySelector('.cart-section');
-    if (cartSection) {
-        cartSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+cat > js/utils.js << 'ENDOFFILE'
+function showMessage(message, type = 'info') {
+    const existingMessage = document.querySelector('.message-toast');
+    if (existingMessage) {
+        existingMessage.remove();
     }
+    
+    const messageEl = document.createElement('div');
+    messageEl.className = `message-toast message-${type}`;
+    messageEl.textContent = message;
+    
+    messageEl.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: ${type === 'success' ? '#28a745' : type === 'warning' ? '#ffc107' : type === 'error' ? '#dc3545' : '#17a2b8'};
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 10000;
+        font-weight: 500;
+        max-width: 90%;
+        text-align: center;
+        animation: slideIn 0.3s ease-out;
+    `;
+    
+    document.body.appendChild(messageEl);
+    
+    setTimeout(() => {
+        if (messageEl.parentNode) {
+            messageEl.style.animation = 'slideIn 0.3s ease-out reverse';
+            setTimeout(() => messageEl.remove(), 300);
+        }
+    }, 3000);
 }
 
 function formatarCep(e) {
@@ -28,7 +59,8 @@ function formatarTelefone(e) {
 }
 
 function buscarCep() {
-    const cep = document.getElementById('customer-cep').value.replace(/\D/g, '');
+    const cep = document.getElementById('customer-cep')?.value.replace(/\D/g, '');
+    if (!cep) return;
     
     if (cep.length !== 8) {
         showMessage('CEP inválido. Digite um CEP com 8 dígitos.', 'warning');
@@ -36,6 +68,8 @@ function buscarCep() {
     }
     
     const cepButton = document.getElementById('buscar-cep');
+    if (!cepButton) return;
+    
     cepButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     cepButton.disabled = true;
     
@@ -44,20 +78,20 @@ function buscarCep() {
         .then(data => {
             if (data.erro) {
                 showMessage('CEP não encontrado. Preencha o endereço manualmente.', 'warning');
-                modalElements.addressFields.style.display = 'block';
+                if (document.getElementById('address-fields')) document.getElementById('address-fields').style.display = 'block';
             } else {
-                document.getElementById('customer-address').value = data.logradouro || '';
-                document.getElementById('customer-neighborhood').value = data.bairro || '';
-                document.getElementById('customer-city').value = data.localidade || '';
-                document.getElementById('customer-state').value = data.uf || '';
-                modalElements.addressFields.style.display = 'block';
-                document.getElementById('customer-number').focus();
+                if (document.getElementById('customer-address')) document.getElementById('customer-address').value = data.logradouro || '';
+                if (document.getElementById('customer-neighborhood')) document.getElementById('customer-neighborhood').value = data.bairro || '';
+                if (document.getElementById('customer-city')) document.getElementById('customer-city').value = data.localidade || '';
+                if (document.getElementById('customer-state')) document.getElementById('customer-state').value = data.uf || '';
+                if (document.getElementById('address-fields')) document.getElementById('address-fields').style.display = 'block';
+                if (document.getElementById('customer-number')) document.getElementById('customer-number').focus();
                 showMessage('Endereço preenchido automaticamente!', 'success');
             }
         })
         .catch(error => {
             showMessage('Erro ao buscar CEP. Preencha o endereço manualmente.', 'error');
-            modalElements.addressFields.style.display = 'block';
+            if (document.getElementById('address-fields')) document.getElementById('address-fields').style.display = 'block';
         })
         .finally(() => {
             cepButton.innerHTML = '<i class="fas fa-search"></i>';
@@ -65,49 +99,9 @@ function buscarCep() {
         });
 }
 
-function showMessage(message, type = 'info') {
-    // Remove existing message
-    const existingMessage = document.querySelector('.message-toast');
-    if (existingMessage) {
-        existingMessage.remove();
-    }
-    
-    const messageEl = document.createElement('div');
-    messageEl.className = `message-toast message-${type}`;
-    messageEl.textContent = message;
-    
-    // Add styles
-    messageEl.style.cssText = `
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: ${type === 'success' ? '#28a745' : type === 'warning' ? '#ffc107' : type === 'error' ? '#dc3545' : '#17a2b8'};
-        color: white;
-        padding: 12px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        z-index: 10000;
-        font-weight: 500;
-        max-width: 90%;
-        text-align: center;
-        animation: slideIn 0.3s ease-out;
-    `;
-    
-    document.body.appendChild(messageEl);
-    
-    // Auto remove after 3 seconds
-    setTimeout(() => {
-        if (messageEl.parentNode) {
-            messageEl.style.animation = 'slideIn 0.3s ease-out reverse';
-            setTimeout(() => messageEl.remove(), 300);
-        }
-    }, 3000);
-}
-
 function validateForm() {
-    const name = document.getElementById('customer-name').value.trim();
-    const phone = document.getElementById('customer-phone').value.trim();
+    const name = document.getElementById('customer-name')?.value.trim();
+    const phone = document.getElementById('customer-phone')?.value.trim();
     
     if (!name || !phone) {
         showMessage('Por favor, preencha pelo menos seu nome e telefone.', 'warning');
@@ -115,11 +109,11 @@ function validateForm() {
     }
     
     if (isDelivery) {
-        const address = document.getElementById('customer-address').value.trim();
-        const number = document.getElementById('customer-number').value.trim();
-        const neighborhood = document.getElementById('customer-neighborhood').value.trim();
-        const city = document.getElementById('customer-city').value.trim();
-        const state = document.getElementById('customer-state').value.trim();
+        const address = document.getElementById('customer-address')?.value.trim();
+        const number = document.getElementById('customer-number')?.value.trim();
+        const neighborhood = document.getElementById('customer-neighborhood')?.value.trim();
+        const city = document.getElementById('customer-city')?.value.trim();
+        const state = document.getElementById('customer-state')?.value.trim();
         
         if (!address || !number || !neighborhood || !city || !state) {
             showMessage('Para delivery, é necessário informar o endereço completo.', 'warning');
@@ -137,12 +131,12 @@ function buildWhatsAppMessage(name, phone, notes) {
     message += `*Tipo:* ${orderType}%0A%0A`;
     
     if (isDelivery) {
-        const address = document.getElementById('customer-address').value.trim();
-        const number = document.getElementById('customer-number').value.trim();
-        const complement = document.getElementById('customer-complement').value.trim();
-        const neighborhood = document.getElementById('customer-neighborhood').value.trim();
-        const city = document.getElementById('customer-city').value.trim();
-        const state = document.getElementById('customer-state').value.trim();
+        const address = document.getElementById('customer-address')?.value.trim() || '';
+        const number = document.getElementById('customer-number')?.value.trim() || '';
+        const complement = document.getElementById('customer-complement')?.value.trim() || '';
+        const neighborhood = document.getElementById('customer-neighborhood')?.value.trim() || '';
+        const city = document.getElementById('customer-city')?.value.trim() || '';
+        const state = document.getElementById('customer-state')?.value.trim() || '';
         
         message += `*Endereço:* ${address}, ${number}`;
         if (complement) message += `, ${complement}`;
@@ -211,9 +205,14 @@ function buildWhatsAppMessage(name, phone, notes) {
 }
 
 function enviarPedidoWhatsApp() {
-    const name = document.getElementById('customer-name').value.trim();
-    const phone = document.getElementById('customer-phone').value.trim();
-    const notes = document.getElementById('customer-notes').value.trim();
+    const name = document.getElementById('customer-name')?.value.trim();
+    const phone = document.getElementById('customer-phone')?.value.trim();
+    const notes = document.getElementById('customer-notes')?.value.trim();
+    
+    if (!name || !phone) {
+        showMessage('Por favor, preencha pelo menos seu nome e telefone.', 'warning');
+        return;
+    }
     
     if (!validateForm()) return;
     
@@ -226,18 +225,19 @@ function enviarPedidoWhatsApp() {
 }
 
 function clearFormAndCart() {
-    document.getElementById('customer-name').value = '';
-    document.getElementById('customer-phone').value = '';
-    document.getElementById('customer-cep').value = '';
-    document.getElementById('customer-address').value = '';
-    document.getElementById('customer-number').value = '';
-    document.getElementById('customer-complement').value = '';
-    document.getElementById('customer-neighborhood').value = '';
-    document.getElementById('customer-city').value = '';
-    document.getElementById('customer-state').value = '';
-    document.getElementById('customer-notes').value = '';
+    if (document.getElementById('customer-name')) document.getElementById('customer-name').value = '';
+    if (document.getElementById('customer-phone')) document.getElementById('customer-phone').value = '';
+    if (document.getElementById('customer-cep')) document.getElementById('customer-cep').value = '';
+    if (document.getElementById('customer-address')) document.getElementById('customer-address').value = '';
+    if (document.getElementById('customer-number')) document.getElementById('customer-number').value = '';
+    if (document.getElementById('customer-complement')) document.getElementById('customer-complement').value = '';
+    if (document.getElementById('customer-neighborhood')) document.getElementById('customer-neighborhood').value = '';
+    if (document.getElementById('customer-city')) document.getElementById('customer-city').value = '';
+    if (document.getElementById('customer-state')) document.getElementById('customer-state').value = '';
+    if (document.getElementById('customer-notes')) document.getElementById('customer-notes').value = '';
     
     document.querySelectorAll('.qty-value').forEach(el => el.textContent = '0');
-    modalElements.addressFields.style.display = 'none';
+    if (document.getElementById('address-fields')) document.getElementById('address-fields').style.display = 'none';
     clearCart();
 }
+ENDOFFILE

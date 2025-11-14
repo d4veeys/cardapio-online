@@ -1,16 +1,11 @@
+cat > js/cart.js << 'ENDOFFILE'
 let cart = {};
 let isDelivery = false;
 
-const elements = {
-    cartItems: document.getElementById('cart-items'),
-    cartTotal: document.getElementById('cart-total'),
-    deliveryFeeContainer: document.getElementById('delivery-fee-container'),
-    floatingCart: document.getElementById('floating-cart'),
-    cartBadge: document.getElementById('cart-badge')
-};
-
 function updateQuantity(productId, change) {
     const qtyElement = document.getElementById(`qty-${productId}`);
+    if (!qtyElement) return;
+    
     let quantity = parseInt(qtyElement.textContent);
     quantity += change;
     if (quantity < 0) quantity = 0;
@@ -26,7 +21,7 @@ function addToCartDirect(productId) {
     if (qtyElement) {
         quantity = parseInt(qtyElement.textContent);
         if (quantity <= 0) {
-            showMessage('Selecione uma quantidade antes de adicionar.', 'warning');
+            alert('Selecione uma quantidade antes de adicionar.');
             return;
         }
         qtyElement.textContent = '0';
@@ -79,15 +74,21 @@ function generateItemId(productId, additionals = []) {
 }
 
 function updateCartDisplay() {
-    elements.cartItems.innerHTML = '';
+    const cartItems = document.getElementById('cart-items');
+    const cartTotal = document.getElementById('cart-total');
+    const deliveryFeeContainer = document.getElementById('delivery-fee-container');
+    
+    if (!cartItems) return;
+    
+    cartItems.innerHTML = '';
     
     let subtotal = 0;
     const itemCount = Object.keys(cart).length;
     
     if (itemCount === 0) {
-        elements.cartItems.innerHTML = '<div class="empty-cart">Seu carrinho está vazio</div>';
-        elements.deliveryFeeContainer.style.display = 'none';
-        elements.cartTotal.textContent = 'R$ 0,00';
+        cartItems.innerHTML = '<div class="empty-cart">Seu carrinho está vazio</div>';
+        if (deliveryFeeContainer) deliveryFeeContainer.style.display = 'none';
+        if (cartTotal) cartTotal.textContent = 'R$ 0,00';
         return;
     }
     
@@ -97,16 +98,18 @@ function updateCartDisplay() {
         subtotal += itemTotal;
         
         const cartItemElement = createCartItemElement(itemId, item, itemTotal);
-        elements.cartItems.appendChild(cartItemElement);
+        cartItems.appendChild(cartItemElement);
     }
     
-    if (isDelivery && subtotal > 0) {
-        elements.deliveryFeeContainer.style.display = 'block';
-    } else {
-        elements.deliveryFeeContainer.style.display = 'none';
+    if (deliveryFeeContainer) {
+        if (isDelivery && subtotal > 0) {
+            deliveryFeeContainer.style.display = 'block';
+        } else {
+            deliveryFeeContainer.style.display = 'none';
+        }
     }
     
-    elements.cartTotal.textContent = `R$ ${subtotal.toFixed(2)}`;
+    if (cartTotal) cartTotal.textContent = `R$ ${subtotal.toFixed(2)}`;
 }
 
 function createCartItemElement(itemId, item, itemTotal) {
@@ -163,20 +166,32 @@ function changeCartItemQuantity(itemId, change) {
 }
 
 function updateFloatingCart() {
+    const floatingCart = document.getElementById('floating-cart');
+    const cartBadge = document.getElementById('cart-badge');
+    
+    if (!floatingCart || !cartBadge) return;
+    
     const summary = getCartSummary();
     
     if (summary.totalItems === 0) {
-        elements.floatingCart.classList.remove('show');
+        floatingCart.classList.remove('show');
         return;
     }
     
-    elements.floatingCart.classList.add('show');
-    elements.cartBadge.textContent = summary.totalItems;
+    floatingCart.classList.add('show');
+    cartBadge.textContent = summary.totalItems;
     
-    elements.cartBadge.style.animation = 'none';
+    cartBadge.style.animation = 'none';
     setTimeout(() => {
-        elements.cartBadge.style.animation = 'pulse 0.5s ease-in-out';
+        cartBadge.style.animation = 'pulse 0.5s ease-in-out';
     }, 10);
+}
+
+function scrollToCart() {
+    const cartSection = document.querySelector('.cart-section');
+    if (cartSection) {
+        cartSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
 }
 
 function getCartSummary() {
@@ -203,3 +218,4 @@ function clearCart() {
     updateCartDisplay();
     updateFloatingCart();
 }
+ENDOFFILE

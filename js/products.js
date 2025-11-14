@@ -1,3 +1,4 @@
+cat > js/products.js << 'ENDOFFILE'
 const PRODUCTS = {
     'casa': { 
         name: 'Pão da Casa', 
@@ -70,3 +71,4 @@ const CONFIG = {
     whatsappNumber: '5569992701658',
     prepareTime: '15-20'
 };
+ENDOFFILE

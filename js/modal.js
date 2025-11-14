@@ -1,13 +1,5 @@
+cat > js/modal.js << 'ENDOFFILE'
 let currentCustomizing = null;
-
-const modalElements = {
-    customerModal: document.getElementById('customer-modal'),
-    customizeModal: document.getElementById('customize-modal'),
-    modalTitle: document.getElementById('modal-title'),
-    deliveryFields: document.getElementById('delivery-fields'),
-    localInstructions: document.getElementById('local-instructions'),
-    addressFields: document.getElementById('address-fields')
-};
 
 function openCustomizeModal(productId) {
     const product = PRODUCTS[productId];
@@ -15,25 +7,35 @@ function openCustomizeModal(productId) {
 
     currentCustomizing = productId;
     
-    document.getElementById('customize-title').textContent = `Personalizar ${product.name}`;
+    if (document.getElementById('customize-title')) {
+        document.getElementById('customize-title').textContent = `Personalizar ${product.name}`;
+    }
     
-    document.getElementById('base-product-info').innerHTML = `
-        <div style="font-weight: bold; margin-bottom: 5px;">${product.name}</div>
-        <div style="color: var(--primary); font-weight: 600;">R$ ${product.price.toFixed(2)}</div>
-        <div style="font-size: 12px; color: #666; margin-top: 5px;">${product.description}</div>
-    `;
+    if (document.getElementById('base-product-info')) {
+        document.getElementById('base-product-info').innerHTML = `
+            <div style="font-weight: bold; margin-bottom: 5px;">${product.name}</div>
+            <div style="color: var(--primary); font-weight: 600;">R$ ${product.price.toFixed(2)}</div>
+            <div style="font-size: 12px; color: #666; margin-top: 5px;">${product.description}</div>
+        `;
+    }
     
     document.querySelectorAll('input[name="additional"]').forEach(input => {
         input.checked = false;
     });
-    document.getElementById('item-notes').value = '';
+    
+    if (document.getElementById('item-notes')) {
+        document.getElementById('item-notes').value = '';
+    }
     
     updateCustomizeTotal();
-    modalElements.customizeModal.style.display = 'flex';
+    
+    const customizeModal = document.getElementById('customize-modal');
+    if (customizeModal) customizeModal.style.display = 'flex';
 }
 
 function closeCustomizeModal() {
-    modalElements.customizeModal.style.display = 'none';
+    const customizeModal = document.getElementById('customize-modal');
+    if (customizeModal) customizeModal.style.display = 'none';
     currentCustomizing = null;
 }
 
@@ -47,7 +49,9 @@ function updateCustomizeTotal() {
         total += parseFloat(input.dataset.price);
     });
     
-    document.getElementById('customize-total-value').textContent = `R$ ${total.toFixed(2)}`;
+    if (document.getElementById('customize-total-value')) {
+        document.getElementById('customize-total-value').textContent = `R$ ${total.toFixed(2)}`;
+    }
 }
 
 function addCustomizedToCart() {
@@ -58,7 +62,7 @@ function addCustomizedToCart() {
         additionals.push(input.value);
     });
     
-    const notes = document.getElementById('item-notes').value.trim();
+    const notes = document.getElementById('item-notes')?.value.trim() || '';
     
     addItemToCart(currentCustomizing, 1, additionals, notes);
     closeCustomizeModal();
@@ -66,20 +70,29 @@ function addCustomizedToCart() {
 }
 
 function openCustomerModal() {
+    const modalTitle = document.getElementById('modal-title');
+    const deliveryFields = document.getElementById('delivery-fields');
+    const localInstructions = document.getElementById('local-instructions');
+    
+    if (!modalTitle || !deliveryFields || !localInstructions) return;
+    
     if (isDelivery) {
-        modalElements.modalTitle.textContent = 'Informações para Entrega';
-        modalElements.deliveryFields.style.display = 'block';
-        modalElements.localInstructions.style.display = 'none';
+        modalTitle.textContent = 'Informações para Entrega';
+        deliveryFields.style.display = 'block';
+        localInstructions.style.display = 'none';
     } else {
-        modalElements.modalTitle.textContent = 'Informações para Consumo no Local';
-        modalElements.deliveryFields.style.display = 'none';
-        modalElements.localInstructions.style.display = 'block';
+        modalTitle.textContent = 'Informações para Consumo no Local';
+        deliveryFields.style.display = 'none';
+        localInstructions.style.display = 'block';
     }
-    modalElements.customerModal.style.display = 'flex';
+    
+    const customerModal = document.getElementById('customer-modal');
+    if (customerModal) customerModal.style.display = 'flex';
 }
 
 function closeCustomerModal() {
-    modalElements.customerModal.style.display = 'none';
+    const customerModal = document.getElementById('customer-modal');
+    if (customerModal) customerModal.style.display = 'none';
 }
 
 function finalizarPedido() {
@@ -89,3 +102,4 @@ function finalizarPedido() {
     }
     openCustomerModal();
 }
+ENDOFFILE
